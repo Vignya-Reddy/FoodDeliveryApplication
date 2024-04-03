@@ -1,10 +1,12 @@
 package com.fooddelivery.menuitems.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fooddelivery.exception.DuplicateItemIDException;
 import com.fooddelivery.menuitems.dao.MenuItemsRepository;
 import com.fooddelivery.model.MenuItems;
 
@@ -17,9 +19,13 @@ public class MenuItemsServiceImpl implements MenuItemsService {
    
     @Override
     @Transactional
-    public int addMenuItems(MenuItems items) {
-        menuItemsDao.saveAndFlush(items);
-        return items.getItemId();
+    public int addMenuItems(MenuItems items) throws DuplicateItemIDException {
+    	Optional<MenuItems> menu=menuItemsDao.findById(items.getItemId());
+		if(menu.isPresent()) {			
+				throw new DuplicateItemIDException("Item with Id"+items.getItemId()+" already Exists");
+			}
+		menuItemsDao.saveAndFlush(items);
+		return items.getItemId();
     }
  
     @Override
@@ -28,5 +34,7 @@ public class MenuItemsServiceImpl implements MenuItemsService {
         System.out.println("Service layer MenuItems called");
         return menuItemsDao.findAll();
     }
+    
+    
  
 }

@@ -19,6 +19,7 @@ public class RestaurantServiceImpl implements RestaurantService {
    
    
     @Override
+    @Transactional
     public List<Restaurant> showRestaurants() {
         // TODO Auto-generated method stub
         System.out.println("Service layer Restaurant called");
@@ -26,13 +27,17 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
  
  
-    @Transactional
+  
     @Override
+    @Transactional
     public int addRestaurants(Restaurant restaurant){
-        Optional<Restaurant> res=restaurantDao.findById(restaurant.getRestaurantId());
+       // Optional<Restaurant> res=restaurantDao.findById(restaurant.getRestaurantId());
         restaurantDao.saveAndFlush(restaurant);
         return restaurant.getRestaurantId();
     }
+    
+    
+    
 }
  
  

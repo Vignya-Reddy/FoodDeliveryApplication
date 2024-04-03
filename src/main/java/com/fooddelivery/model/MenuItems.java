@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 public class MenuItems implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     //@SequenceGenerator(name= "menuitems_seq",sequenceName = "menuitems_seq",allocationSize=1)
     @Column(name="ITEM_ID")
     private int itemId;
