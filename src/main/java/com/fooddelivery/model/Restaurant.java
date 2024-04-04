@@ -25,17 +25,30 @@ public class Restaurant {
     private int restaurantId;
     
     @NotBlank(message = "Name is required")
-    @Size(max = 4, message = "Name cannot exceed 4 characters")
+    @Size(max = 20, message = "Name cannot exceed 20 characters")
     @Column
     private String restaurantName;
     @Column
     private String restaurantAddress;
     
-    @Digits(message="Number should contain 10 digits.", fraction = 0, integer = 10) 
+    //@Digits(message="Number should contain 10 digits.", fraction = 0, integer = 10) 
     @Column
     private String restaurantPhone;
     
-    @OneToMany( fetch = FetchType.EAGER, cascade= CascadeType.ALL)
+    
+    public Restaurant(int restaurantId,@NotBlank(message = "Name is required") @Size(max = 20, message = "Name cannot exceed 20 characters") String restaurantName,
+			String restaurantAddress, String restaurantPhone) {
+		super();
+		this.restaurantId = restaurantId;
+		this.restaurantName = restaurantName;
+		this.restaurantAddress = restaurantAddress;
+		this.restaurantPhone = restaurantPhone;
+	}
+    
+    public Restaurant() {
+    	
+    }
+	@OneToMany( fetch = FetchType.EAGER, cascade= CascadeType.ALL)
     //private List<MenuItems> items = new ArrayList<>();
 
     public int getRestaurantId() {

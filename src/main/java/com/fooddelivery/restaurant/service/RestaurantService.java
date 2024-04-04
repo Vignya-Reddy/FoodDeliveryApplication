@@ -8,7 +8,11 @@ import com.fooddelivery.model.Restaurant;
 
 public interface RestaurantService {
     int addRestaurants(Restaurant restaurant) throws DuplicateRestaurantIDException;
-    List<Restaurant> showRestaurants() throws RestaurantNotFoundException;
+    List<Restaurant> showRestaurants();
+    Restaurant updateRestaurant(Restaurant restaurant);
 	
+	void deleteRestaurantByID(int restaurantId);
+
+	Restaurant findById(int restaurantId) throws RestaurantNotFoundException;
  
 }

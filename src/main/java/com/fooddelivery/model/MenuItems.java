@@ -32,14 +32,27 @@ public class MenuItems implements Serializable {
     private String itemDescription;
     @Column(name="ITEM_PRICE")
     private double itemPrice;
-   
     
+
+	public MenuItems(int itemId, @NotBlank(message = "Name is required") String itemName, String itemDescription,
+			double itemPrice) {
+		super();
+		this.itemId = itemId;
+		this.itemName = itemName;
+		this.itemDescription = itemDescription;
+		this.itemPrice = itemPrice;
+	}
+	
+	public MenuItems() {
+		
+	}
 
 	@ManyToOne
     @JoinColumn(name="restaurant_id")
     private Restaurant restaurant;
    
-    public Restaurant getRestaurant() {
+    
+	public Restaurant getRestaurant() {
         return restaurant;
     }
     public void setRestaurant(Restaurant restaurant) {

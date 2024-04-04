@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fooddelivery.exception.DuplicateItemIDException;
+import com.fooddelivery.exception.ItemNotFoundException;
 import com.fooddelivery.menuitems.dao.MenuItemsRepository;
 import com.fooddelivery.model.MenuItems;
 
@@ -34,6 +35,26 @@ public class MenuItemsServiceImpl implements MenuItemsService {
         System.out.println("Service layer MenuItems called");
         return menuItemsDao.findAll();
     }
+    
+    @Transactional
+	@Override
+	public MenuItems updateMenuItem(MenuItems items) {
+		
+		Optional<MenuItems> previouItem= menuItemsDao.findById(items.getItemId());
+		MenuItems itemupdated=previouItem.get();
+		//Do not change the customer id using setter method
+		itemupdated.setItemName(items.getItemName()); //automatically update data in table
+	
+		return itemupdated;
+	}
+
+
+	@Override
+	@Transactional
+	public void deleteMenuItemByID(int itemId) {
+		menuItemsDao.deleteById(itemId);
+		
+	}
     
     
  
