@@ -14,4 +14,14 @@ public class SuccessResponse {
 		this.successCode = successCode;
 	}
 
+	public String getMessage() {
+		// TODO Auto-generated method stub
+		return successMessage;
+	}
+
+	public String getCode() {
+		// TODO Auto-generated method stub
+		return successCode;
+	}
+
 }

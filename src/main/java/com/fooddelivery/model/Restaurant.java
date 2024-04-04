@@ -13,6 +13,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "restaurants")
@@ -20,11 +23,16 @@ public class Restaurant {
     @Id
     @Column(name="RESTAURANT_ID")
     private int restaurantId;
-    @Column(name="RESTAURANT_NAME")
+    
+    @NotBlank(message = "Name is required")
+    @Size(max = 4, message = "Name cannot exceed 4 characters")
+    @Column
     private String restaurantName;
-    @Column(name="RESTAURANT_ADDRESS")
+    @Column
     private String restaurantAddress;
-    @Column(name="RESTAURANT_PHONE")
+    
+    @Digits(message="Number should contain 10 digits.", fraction = 0, integer = 10) 
+    @Column
     private String restaurantPhone;
     
     @OneToMany( fetch = FetchType.EAGER, cascade= CascadeType.ALL)

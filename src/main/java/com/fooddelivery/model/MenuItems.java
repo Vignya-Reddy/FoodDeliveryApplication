@@ -11,6 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "menuitems")
@@ -21,6 +23,9 @@ public class MenuItems implements Serializable {
     //@SequenceGenerator(name= "menuitems_seq",sequenceName = "menuitems_seq",allocationSize=1)
     @Column(name="ITEM_ID")
     private int itemId;
+    
+    @NotBlank(message = "Name is required")
+    //@Size(max = 100, message = "Name cannot exceed 100 characters")
     @Column(name="ITEM_NAME")
     private String itemName;
     @Column(name="ITEM_DESCRIPTION")
@@ -28,7 +33,9 @@ public class MenuItems implements Serializable {
     @Column(name="ITEM_PRICE")
     private double itemPrice;
    
-    @ManyToOne
+    
+
+	@ManyToOne
     @JoinColumn(name="restaurant_id")
     private Restaurant restaurant;
    

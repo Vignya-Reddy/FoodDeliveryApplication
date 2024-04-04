@@ -3,6 +3,8 @@ package com.fooddelivery.restaurant.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,13 +18,16 @@ import com.fooddelivery.exception.DuplicateRestaurantIDException;
 
 import com.fooddelivery.exception.InvalidRestaurantIDException;
 import com.fooddelivery.exception.RestaurantNotFoundException;
+import com.fooddelivery.exception.SuccessResponse;
 import com.fooddelivery.model.Restaurant;
 import com.fooddelivery.restaurant.service.RestaurantService;
+import com.fooddelivery.exception.*;
 
 import jakarta.validation.Valid;
 
+@ComponentScan
 @RestController
-@Validated
+
 @RequestMapping(value="/api/restaurants")
 public class RestaurantController {
     @Autowired
@@ -35,7 +40,7 @@ public class RestaurantController {
     }
    
     @PostMapping(consumes = "application/json",produces = "application/json")
-    ResponseEntity<Restaurant> addRestaurants(@Valid @RequestBody Restaurant restaurant) throws DuplicateRestaurantIDException, InvalidRestaurantIDException{
+    ResponseEntity<String> addRestaurants(@Valid @RequestBody Restaurant restaurant) throws DuplicateRestaurantIDException, InvalidRestaurantIDException{
     	if(restaurant.getRestaurantId()<= 0) {
 			throw new InvalidRestaurantIDException("Restaurant ID is invalid");
 		}
@@ -45,7 +50,9 @@ public class RestaurantController {
             throw new DuplicateRestaurantIDException("Restaurant is duplicate");
         }
         System.out.println("Restaurant Id in controller is "+resId);
-        return ResponseEntity.ok(restaurant);
+        SuccessResponse successResponse = new SuccessResponse("Restaurants are fetched successfully", "200");
+        String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
+        return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
     }
  
 }
