@@ -31,7 +31,6 @@ import jakarta.validation.Valid;
 
 @ComponentScan
 @RestController
-
 @RequestMapping(value="/api/restaurants")
 public class RestaurantController {
     @Autowired
@@ -44,6 +43,7 @@ public class RestaurantController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("restaurants", resList, "message", successResponse.getMessage(), "code", successResponse.getCode()));
         
     }
+    
    
     @PostMapping(consumes = "application/json",produces = "application/json")
     ResponseEntity<String> addRestaurants(@Valid @RequestBody Restaurant restaurant) throws DuplicateRestaurantIDException, InvalidRestaurantIDException{
@@ -61,6 +61,7 @@ public class RestaurantController {
         return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
     }
     
+    
     @PutMapping("/{restaurantId}")
 	ResponseEntity<String> updateRestaurant(@Valid @RequestBody Restaurant restaurant){
 		Restaurant res = restaurantService.updateRestaurant(restaurant);
@@ -69,6 +70,8 @@ public class RestaurantController {
         String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
         return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
 	}
+    
+    
 	@DeleteMapping("/{restaurantId}")
 	ResponseEntity<String> deleteCustomer(@PathVariable("restaurantId") Integer restaurantId ) {
 		restaurantService.deleteRestaurantByID(restaurantId);
@@ -76,6 +79,7 @@ public class RestaurantController {
         String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
         return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
 	}
+	
 	
 	@GetMapping(path="/{restaurantId}", produces = "application/json")
 	ResponseEntity<Map<String, Object>> findByRestaurantId(@PathVariable("restaurantId") Integer restaurantId) throws RestaurantNotFoundException{

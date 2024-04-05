@@ -149,15 +149,4 @@ public class MenuItemsServiceImplTest {
 
 
  
-//	@Test
-//	public void testDeleteCustomerById() {
-//		// Given
-//		int customerId = 101;
-// 
-//		// When
-//		customerService.deleteCustomerByID(customerId);
-// 
-//		// Then
-//		verify(customerRepository).deleteById(customerId);
-//	}
 

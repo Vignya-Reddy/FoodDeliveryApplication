@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.fooddelivery.exception.DuplicateItemIDException;
 import com.fooddelivery.exception.DuplicateRestaurantIDException;
 import com.fooddelivery.exception.RestaurantNotFoundException;
+import com.fooddelivery.menuitems.dao.MenuItemsRepository;
 import com.fooddelivery.model.MenuItems;
 import com.fooddelivery.model.Restaurant;
 import com.fooddelivery.restaurant.dao.RestaurantRepository;
@@ -20,12 +21,14 @@ public class RestaurantServiceImpl implements RestaurantService {
  
     @Autowired
     RestaurantRepository restaurantDao;
+    
+    @Autowired
+    private MenuItemsRepository menuItemsRepository;
    
    
     @Override
     @Transactional
     public List<Restaurant> showRestaurants() {
-        // TODO Auto-generated method stub
         System.out.println("Service layer Restaurant called");
         return restaurantDao.findAll();
     }
@@ -72,6 +75,16 @@ public class RestaurantServiceImpl implements RestaurantService {
 			return res.get();
  
 }
+	
+//	@Override
+//	public List<MenuItems> getMenuItemsByRestaurant(String restaurantName) throws RestaurantNotFoundException {
+//	    List<MenuItems> menuItems = menuItemsRepository.findByRestaurantName(restaurantName);
+//	    if (menuItems.isEmpty()) {
+//	        throw new RestaurantNotFoundException("Menu items for the restaurant '" + restaurantName + "' are not found!");
+//	    }
+//	    return menuItems;
+//	}
+
 
 
     

@@ -26,13 +26,13 @@ public class Restaurant {
     
     @NotBlank(message = "Name is required")
     @Size(max = 20, message = "Name cannot exceed 20 characters")
-    @Column
+    @Column(name = "RESTAURANT_NAME")
     private String restaurantName;
-    @Column
+    @Column(name = "RESTAURANT_ADDRESS")
     private String restaurantAddress;
     
     //@Digits(message="Number should contain 10 digits.", fraction = 0, integer = 10) 
-    @Column
+    @Column(name = "RESTAURANT_PHONE")
     private String restaurantPhone;
     
     
