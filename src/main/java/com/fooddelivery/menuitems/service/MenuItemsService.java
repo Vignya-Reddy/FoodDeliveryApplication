@@ -13,9 +13,9 @@ public interface MenuItemsService {
     
     List<MenuItems> showMenuItems();
     
-	void deleteMenuItemByID(int itemId);
+	void deleteMenuItemByID(int itemId) throws ItemNotFoundException;
 
-	MenuItems updateMenuItem(MenuItems items);
+	MenuItems updateMenuItem(MenuItems items) throws ItemNotFoundException;
 	
 
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fooddelivery.exception.DuplicateItemIDException;
 import com.fooddelivery.exception.InvalidItemIDException;
 import com.fooddelivery.exception.ItemNotFoundException;
+import com.fooddelivery.exception.RestaurantNotFoundException;
 import com.fooddelivery.exception.SuccessResponse;
 import com.fooddelivery.menuitems.service.MenuItemsService;
 import com.fooddelivery.model.MenuItems;
@@ -53,9 +54,12 @@ public class MenuItemsController {
 	}
     
     @PutMapping("/{itemId}")
-    ResponseEntity<Object> updateMenuItem(@Valid @RequestBody MenuItems items){
+    ResponseEntity<Object> updateMenuItem(@Valid @RequestBody MenuItems items) throws ItemNotFoundException{
 		MenuItems menu = menuService.updateMenuItem(items);
-		System.out.println("Customer ID in controller");		
+		if(items == null) {
+			throw new ItemNotFoundException("MenuItem not present");
+		}
+		System.out.println("Item ID in controller");		
 		
 		SuccessResponse successResponse = new SuccessResponse("Items are updated successfully", "200");
         String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
@@ -65,7 +69,7 @@ public class MenuItemsController {
     
     
 	@DeleteMapping("/{itemId}")
-	ResponseEntity<Object> deleteMenuItem(@PathVariable("itemId") Integer itemId ) {
+	ResponseEntity<Object> deleteMenuItem(@PathVariable("itemId") Integer itemId ) throws ItemNotFoundException {
 		menuService.deleteMenuItemByID(itemId);
 		SuccessResponse successResponse = new SuccessResponse("Items are deleted successfully", "200");
         String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";

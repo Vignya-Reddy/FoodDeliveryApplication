@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.fooddelivery.exception.DuplicateItemIDException;
 import com.fooddelivery.exception.ItemNotFoundException;
+import com.fooddelivery.exception.RestaurantNotFoundException;
 import com.fooddelivery.menuitems.dao.MenuItemsRepository;
 import com.fooddelivery.model.MenuItems;
 
@@ -37,25 +38,33 @@ public class MenuItemsServiceImpl implements MenuItemsService {
     }
     
     @Transactional
-	@Override
-	public MenuItems updateMenuItem(MenuItems items) {
-		
-		Optional<MenuItems> previouItem= menuItemsDao.findById(items.getItemId());
-		MenuItems itemupdated=previouItem.get();
-		//Do not change the customer id using setter method
-		itemupdated.setItemName(items.getItemName()); //automatically update data in table
-	
-		return itemupdated;
-	}
+    @Override
+    public MenuItems updateMenuItem(MenuItems updatedItem) throws ItemNotFoundException {
+        Optional<MenuItems> existingItemOptional = menuItemsDao.findById(updatedItem.getItemId());
+        if (!existingItemOptional.isPresent()) {
+            throw new ItemNotFoundException("Item with ID " + updatedItem.getItemId() + " not found");
+        }
+        
+        MenuItems existingItem = existingItemOptional.get();
+        existingItem.setItemName(updatedItem.getItemName());
+        existingItem.setItemDescription(updatedItem.getItemDescription());
+        existingItem.setItemPrice(updatedItem.getItemPrice());
+
+        // Save the updated item
+        return menuItemsDao.save(existingItem);
+    }
 
 
-	@Override
-	@Transactional
-	public void deleteMenuItemByID(int itemId) {
-		menuItemsDao.deleteById(itemId);
-		
-	}
-    
-    
- 
+
+    @Override
+    @Transactional
+    public void deleteMenuItemByID(int itemId) throws ItemNotFoundException {
+        Optional<MenuItems> menuItem = menuItemsDao.findById(itemId);
+        if (menuItem.isEmpty()) {
+            throw new ItemNotFoundException("Item not found");
+        } else {
+            menuItemsDao.deleteById(itemId);
+        }
+    }
+
 }
