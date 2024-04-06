@@ -66,5 +66,18 @@ public class MenuItemsServiceImpl implements MenuItemsService {
             menuItemsDao.deleteById(itemId);
         }
     }
+    
+
+    @Override
+    @Transactional
+    public List<MenuItems> getMenuItemsByRestaurantId(int restaurantId) throws RestaurantNotFoundException {
+        List<MenuItems> menuItems = menuItemsDao.findByRestaurantRestaurantId(restaurantId);
+        if (menuItems.isEmpty()) {
+            throw new RestaurantNotFoundException("No menu items found for restaurant with ID " + restaurantId);
+        }
+        return menuItems;
+    }
+    
+    
 
 }

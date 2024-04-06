@@ -49,9 +49,10 @@ public class Restaurant {
     	
     }
 	@OneToMany( fetch = FetchType.EAGER, cascade= CascadeType.ALL)
-    //private List<MenuItems> items = new ArrayList<>();
-
-    public int getRestaurantId() {
+	
+	
+	
+	public int getRestaurantId() {
         return restaurantId;
     }
     public void setRestaurantId(int restaurantId) {
@@ -75,12 +76,7 @@ public class Restaurant {
     public void setRestaurantPhone(String restaurantPhone) {
         this.restaurantPhone = restaurantPhone;
     }
-//    public List<MenuItems> getItems() {
-//        return items;
-//    }
-//    public void setItems(List<MenuItems> items) {
-//        this.items = items;
-//    }
+
    
    
    

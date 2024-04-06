@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fooddelivery.exception.DuplicateItemIDException;
 import com.fooddelivery.exception.ItemNotFoundException;
+import com.fooddelivery.exception.RestaurantNotFoundException;
 import com.fooddelivery.model.MenuItems;
 
 import jakarta.validation.Valid;
@@ -16,6 +17,8 @@ public interface MenuItemsService {
 	void deleteMenuItemByID(int itemId) throws ItemNotFoundException;
 
 	MenuItems updateMenuItem(MenuItems items) throws ItemNotFoundException;
+
+	List<MenuItems> getMenuItemsByRestaurantId(int restaurantId) throws RestaurantNotFoundException;
 	
 
 }

@@ -23,6 +23,10 @@ import com.fooddelivery.exception.DuplicateRestaurantIDException;
 import com.fooddelivery.exception.InvalidRestaurantIDException;
 import com.fooddelivery.exception.RestaurantNotFoundException;
 import com.fooddelivery.exception.SuccessResponse;
+import com.fooddelivery.menuitems.service.MenuItemsService;
+import com.fooddelivery.model.DeliveryAddress;
+import com.fooddelivery.model.MenuItems;
+import com.fooddelivery.model.Ratings;
 import com.fooddelivery.model.Restaurant;
 import com.fooddelivery.restaurant.service.RestaurantService;
 import com.fooddelivery.exception.*;
@@ -31,10 +35,15 @@ import jakarta.validation.Valid;
 
 @ComponentScan
 @RestController
+@Validated
 @RequestMapping(value="/api/restaurants")
 public class RestaurantController {
     @Autowired
     RestaurantService restaurantService;
+    
+    @Autowired
+    private MenuItemsService menuItemsService;
+    
     @GetMapping(produces = "application/json")
     ResponseEntity<Map<String, Object>> showRestaurants() throws RestaurantNotFoundException{
         System.out.println("Restaurant Controller");
@@ -44,7 +53,6 @@ public class RestaurantController {
         
     }
     
-   
     @PostMapping(consumes = "application/json",produces = "application/json")
     ResponseEntity<String> addRestaurants(@Valid @RequestBody Restaurant restaurant) throws DuplicateRestaurantIDException, InvalidRestaurantIDException{
     	if(restaurant.getRestaurantId()<= 0) {
@@ -91,5 +99,28 @@ public class RestaurantController {
         String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("restaurant", res, "message", successResponse.getMessage(), "code", successResponse.getCode()));
 	}
- 
+	
+	@GetMapping("/{restaurantId}/menu")
+	ResponseEntity<Map<String, Object>> getMenuItemsByRestaurantId(@PathVariable int restaurantId) throws RestaurantNotFoundException {
+	    List<MenuItems> menuItems = menuItemsService.getMenuItemsByRestaurantId(restaurantId);
+	    if (menuItems.isEmpty()) {
+	        throw new RestaurantNotFoundException("No menu items found for the restaurant ID: " + restaurantId);
+	    }
+	    SuccessResponse successResponse = new SuccessResponse("Restaurant is fetched successfully", "200");
+        String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("restaurant", menuItems, "message", successResponse.getMessage(), "code", successResponse.getCode()));
+
+}
+	
+	@GetMapping("/{restaurantId}/reviews")
+	public ResponseEntity<Map<String, Object>> getAllReviewsForRestaurant(@PathVariable int restaurantId) throws RestaurantNotFoundException {
+	    List<String> reviews = restaurantService.getAllReviewsForRestaurant(restaurantId);
+	    if (reviews.isEmpty()) {
+	        return ResponseEntity.noContent().build();
+	    } else {
+	        SuccessResponse successResponse = new SuccessResponse("Reviews retrieved successfully", "200");
+	        return ResponseEntity.status(HttpStatus.OK).body(Map.of("reviews", reviews, "message", successResponse.getMessage(), "code", successResponse.getCode()));
+	    }
+	}
+
 }

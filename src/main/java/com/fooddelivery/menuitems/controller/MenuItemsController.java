@@ -1,6 +1,7 @@
 package com.fooddelivery.menuitems.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,13 @@ import com.fooddelivery.exception.RestaurantNotFoundException;
 import com.fooddelivery.exception.SuccessResponse;
 import com.fooddelivery.menuitems.service.MenuItemsService;
 import com.fooddelivery.model.MenuItems;
+import com.fooddelivery.model.Restaurant;
 
 import jakarta.validation.Valid;
 
 @RestController
 @Validated
-@RequestMapping(value = "/api/restaurants/{restaurantId}/menu")
+@RequestMapping(value = "/api/menuitems")
 public class MenuItemsController {
     @Autowired
     MenuItemsService menuService;
@@ -77,6 +79,18 @@ public class MenuItemsController {
         String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
         return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
 	}
+	
+	@GetMapping("/menu")
+	public ResponseEntity<Map<String, Object>> getMenuItemsByRestaurantId(@PathVariable("restaurantId") int restaurantId) throws RestaurantNotFoundException {
+	    List<MenuItems> menuItems = menuService.getMenuItemsByRestaurantId(restaurantId);
+	    if (menuItems.isEmpty()) {
+	        throw new RestaurantNotFoundException("Restaurant with ID " + restaurantId + " not found");
+	    }
+        SuccessResponse successResponse = new SuccessResponse("Menu Items list retrieved successfully", "200");
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("restaurants", menuItems, "message", successResponse.getMessage(), "code", successResponse.getCode()));
+	}
+
+	
 	
 	
 

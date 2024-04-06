@@ -9,7 +9,7 @@ import com.fooddelivery.model.MenuItems;
 
 @Repository
 public interface MenuItemsRepository extends JpaRepository<MenuItems, Integer>{
+	List<MenuItems> findByRestaurantRestaurantId(int restaurantId);
 
-//	List<MenuItems> findByRestaurantName(String restaurantName);
- 
+
 }

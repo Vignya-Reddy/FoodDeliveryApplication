@@ -70,5 +70,15 @@ public class GlobalExceptionHandler {
         ResponseEntity<ExceptionResponse> responseEntyity=new ResponseEntity<ExceptionResponse>(response,HttpStatus.CONFLICT);
         return responseEntyity;
     }
+	
+	@ExceptionHandler(RestaurantNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleRestaurantNotFoundException(RestaurantNotFoundException e){
+        ExceptionResponse response=new ExceptionResponse();
+        response.setErrorCode("CONFLICT");
+        response.setErrorMessage(e.getMessage());
+        response.setTimestamp(LocalDateTime.now());
+        ResponseEntity<ExceptionResponse> responseEntyity=new ResponseEntity<ExceptionResponse>(response,HttpStatus.CONFLICT);
+        return responseEntyity;
+    }
 
 }
