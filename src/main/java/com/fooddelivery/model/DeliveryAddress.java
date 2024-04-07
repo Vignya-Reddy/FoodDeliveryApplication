@@ -1,9 +1,5 @@
 package com.fooddelivery.model;
-
-
-
 import java.io.Serializable;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,60 +9,31 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-
 @Entity
-@Table(name = "deliveryaddresses")
+@Table(name = " deliveryaddresses")
+@SequenceGenerator(name= "deliveryaddresses_seq",sequenceName = "deliveryaddresses_seq")
 public class DeliveryAddress implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @SequenceGenerator(name= "menuitems_seq",sequenceName = "menuitems_seq",allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator ="deliveryaddresses_seq")
     @Column(name="ADDRESS_ID")
     private int addressId;
-    
     @Column(name="ADDRESS_LINE1")
     private String addressLine1;
     @Column(name="ADDRESS_LINE2")
     private String addressLine2;
-    
     @Column(name="CITY")
     private String city;
     @Column(name="STATE")
     private String state;
     @Column(name="POSTAL_CODE")
     private String postalCode;
-    
-	public DeliveryAddress(int addressId, String addressLine1, String addressLine2, String city, String state,
-			String postalCode, Restaurant restaurant) {
-		super();
-		this.addressId = addressId;
-		this.addressLine1 = addressLine1;
-		this.addressLine2 = addressLine2;
-		this.city = city;
-		this.state = state;
-		this.postalCode = postalCode;
-		
-	}
-	
-	public DeliveryAddress() {
-		
-	}
-
-	@ManyToOne
+ 
+    @ManyToOne
     @JoinColumn(name="customer_id")
-	
     private Customer customer;
-   
-    public Customer getCustomer() {
-        return customer;
-    }
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-	
-   
-    public int getAddressId() {
+ 
+	  public int getAddressId() {
 		return addressId;
 	}
 
@@ -114,12 +81,16 @@ public class DeliveryAddress implements Serializable {
 		this.postalCode = postalCode;
 	}
 
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
 
 	@Override
-    public String toString() {
-        return "DeliveryAddress [addressId=" + addressId + ", addressline1=" + addressLine1 + ", addressline2 =" + addressLine2 + ", city =" + city +  ", state =" + state +  ", postalcode =" + postalCode +"]";
-    }
- 
- 
+	    public String toString() {
+	        return "DeliveryAddress [address_Id=" + addressId + ", addressLine1=" + addressLine1 + ", addressLine2=" + addressLine2 + ", city=" + city+  ", state=" + state + " postalCode=" + postalCode+" ]";
+	    }
 }
- 

@@ -87,6 +87,13 @@ public class MenuItems implements Serializable {
     public String toString() {
         return "MenuItems [itemId=" + itemId + ", itemName=" + itemName + ", description=" + itemDescription + ", price=" + itemPrice+  "]";
     }
+
+	public int getRestaurantId() {
+		// TODO Auto-generated method stub
+		return restaurant.getRestaurantId();
+	}
+
+	
  
  
 }

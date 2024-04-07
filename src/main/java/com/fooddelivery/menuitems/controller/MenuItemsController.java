@@ -33,6 +33,8 @@ import jakarta.validation.Valid;
 public class MenuItemsController {
     @Autowired
     MenuItemsService menuService;
+    
+    
     @GetMapping(produces = "application/json")
     List<MenuItems> showMenuItems(){
         System.out.println("MenuItems Controller");
@@ -80,16 +82,7 @@ public class MenuItemsController {
         return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
 	}
 	
-	@GetMapping("/menu")
-	public ResponseEntity<Map<String, Object>> getMenuItemsByRestaurantId(@PathVariable("restaurantId") int restaurantId) throws RestaurantNotFoundException {
-	    List<MenuItems> menuItems = menuService.getMenuItemsByRestaurantId(restaurantId);
-	    if (menuItems.isEmpty()) {
-	        throw new RestaurantNotFoundException("Restaurant with ID " + restaurantId + " not found");
-	    }
-        SuccessResponse successResponse = new SuccessResponse("Menu Items list retrieved successfully", "200");
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("restaurants", menuItems, "message", successResponse.getMessage(), "code", successResponse.getCode()));
-	}
-
+	
 	
 	
 	

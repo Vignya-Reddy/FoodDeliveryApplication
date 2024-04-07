@@ -19,6 +19,10 @@ public interface MenuItemsService {
 	MenuItems updateMenuItem(MenuItems items) throws ItemNotFoundException;
 
 	List<MenuItems> getMenuItemsByRestaurantId(int restaurantId) throws RestaurantNotFoundException;
+
+	
+
+	
 	
 
 }

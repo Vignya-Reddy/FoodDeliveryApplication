@@ -59,19 +59,22 @@ public class RestaurantServiceImplTest {
     }
 
     @Test
-    public void testAddRestaurants_Positive() throws DuplicateRestaurantIDException {
-        // Arrange
-        Restaurant restaurant = new Restaurant(56, "El Rancho Mexican Grill", "234 Maple Road", "+23456678");
-        when(restaurantRepository.findById(56)).thenReturn(Optional.empty());
-        when(restaurantRepository.saveAndFlush(restaurant)).thenReturn(restaurant);
+    public void testShowRestaurants_Positive() {
+    	// Create a mock or test instance of the Restaurant class
+    	Restaurant testRestaurant = new Restaurant();
+    	testRestaurant.setRestaurantName("Bella Italia"); // Set the expected restaurant name
 
-        // Act
-        int id = restaurantService.addRestaurants(restaurant);
+    	// Set up the mock behavior for the repository
+    	List<Restaurant> restaurantList = new ArrayList<>();
+    	restaurantList.add(testRestaurant);
+    	when(restaurantRepository.findAll()).thenReturn(restaurantList);
 
-        // Assert
-        assertEquals(56, id);
-        verify(restaurantRepository).findById(56);
-        verify(restaurantRepository).saveAndFlush(restaurant);
+    	// Perform the test
+    	List<Restaurant> result = restaurantService.showRestaurants();
+
+    	// Assert the result
+    	assertEquals(restaurantList, result);
+
     }
 
     @Test
@@ -160,6 +163,12 @@ public class RestaurantServiceImplTest {
 	    // Verify that deleteById method is not called
 	    verify(restaurantRepository, never()).deleteById(anyInt());
 	}
+	
+	
+
+ 
+
+ 
 
 }
 

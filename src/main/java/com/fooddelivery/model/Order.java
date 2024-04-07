@@ -1,6 +1,5 @@
 package com.fooddelivery.model;
 
-
 import java.io.Serializable;
 import java.util.Date;
 import jakarta.persistence.Column;
@@ -9,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -18,12 +18,12 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "orders")
 //@SequenceGenerator(name = "order_seq", sequenceName = "order_sequence", allocationSize = 1)
-@SequenceGenerator(name="order_gen", sequenceName="order_seq")
+//@SequenceGenerator(name="order_gen", sequenceName="order_seq")
 public class Order implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_gen")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name="ORDER_ID")
     private int orderId;
@@ -53,8 +53,8 @@ public class Order implements Serializable {
     @ManyToOne 
     @JoinColumn(name="restaurant_id") 
     private Restaurant restaurant; 
-
-    public Restaurant getRestaurant() {
+    
+	public Restaurant getRestaurant() {
         return restaurant;
     }
 
@@ -113,4 +113,3 @@ public class Order implements Serializable {
 
 	
 }
-
