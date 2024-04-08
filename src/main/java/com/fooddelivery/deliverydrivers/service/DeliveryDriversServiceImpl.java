@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.fooddelivery.deliverydrivers.dao.DeliveryDriversRepository;
 import com.fooddelivery.exception.DeliveryDriversNotFoundException;
 import com.fooddelivery.exception.DuplicateDeliveryDriversIDException;
+import com.fooddelivery.exception.OrdersNotFoundException;
 import com.fooddelivery.exception.RestaurantNotFoundException;
 import com.fooddelivery.model.DeliveryDrivers;
 import com.fooddelivery.model.Order;
@@ -47,12 +48,7 @@ public class DeliveryDriversServiceImpl implements DeliveryDriversService {
         }
     }
 
-    @Override
-    public DeliveryDrivers findById(Integer driverId) {
-        Optional<DeliveryDrivers> driver = deliveryDriversDao.findById(driverId);
-        return driver.orElse(null);
-    }
-    
+   
 //    @Override
 //    @Transactional
 //    public List<String> getAllOrdersForDriver(int driverId) throws DeliveryDriversNotFoundException {
@@ -66,14 +62,30 @@ public class DeliveryDriversServiceImpl implements DeliveryDriversService {
 //        return orders;
 //    }
     
+ 
     @Override
-	@Transactional
-	public List<String> getOrdersByDriverId(int driverId) {  
-		DeliveryDrivers driver = deliveryDriversDao.findById(driverId).orElse(null);   
-		if (driver == null) {  
-			return null;}
-		return orderDao.findByDeliveryDrivers(driver);// Handle case where driver is not foundreturn null;         }         return orderRepository.findByDeliveryDrivers(driver);     }
-	}
+    @Transactional
+    public DeliveryDrivers findById(int driverId) throws DeliveryDriversNotFoundException {
+        return deliveryDriversDao.findById(driverId)
+                .orElseThrow(() -> new DeliveryDriversNotFoundException("Delivery driver with id " + driverId + " not found"));
+    }
+    
+    @Override
+    @Transactional
+    public List<Order> getOrdersByDriverId(int driverId) throws OrdersNotFoundException, DeliveryDriversNotFoundException {
+        // Find delivery driver by ID
+        DeliveryDrivers driver = findById(driverId);
+        
+        // Retrieve orders associated with the delivery driver
+        List<Order> orders = orderDao.findByDeliveryDrivers(driver);
+        
+        // Check if orders are empty
+        if (orders.isEmpty()) {
+            throw new OrdersNotFoundException("No orders found for delivery driver with ID: " + driverId);
+        }
+        
+        return orders;
+    }
 
 
     }

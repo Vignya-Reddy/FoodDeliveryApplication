@@ -58,7 +58,13 @@ public class OrdersServiceImpl implements OrdersService{
 			orderDao.deleteById(orderId);
 			
 		}
-	
-
-	    
+		
+		@Override
+		@Transactional
+	    public Order getOrderById(int id) throws OrdersNotFoundException {
+	        return orderDao.findById(id)
+	                .orElseThrow(() -> new OrdersNotFoundException("Order with id " + id + " not found"));
+	    }
+		
+		
 }

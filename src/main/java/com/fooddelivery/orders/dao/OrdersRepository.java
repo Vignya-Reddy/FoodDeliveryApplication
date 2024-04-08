@@ -13,7 +13,7 @@ import com.fooddelivery.model.Order;
 @Repository
 public interface OrdersRepository extends JpaRepository<Order, Integer> {
 
-	List<String> findByDeliveryDrivers(DeliveryDrivers driver);
+	List<Order> findByDeliveryDrivers(DeliveryDrivers driver);
 
 
 

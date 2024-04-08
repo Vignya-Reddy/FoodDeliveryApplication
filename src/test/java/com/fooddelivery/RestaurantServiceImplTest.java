@@ -1,6 +1,4 @@
 package com.fooddelivery;
-
-
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertEquals;
@@ -58,23 +56,21 @@ public class RestaurantServiceImplTest {
         verify(restaurantRepository).findAll();
     }
 
+
     @Test
-    public void testShowRestaurants_Positive() {
-    	// Create a mock or test instance of the Restaurant class
-    	Restaurant testRestaurant = new Restaurant();
-    	testRestaurant.setRestaurantName("Bella Italia"); // Set the expected restaurant name
+    public void testAddRestaurants_Positive() throws DuplicateRestaurantIDException {
+        // Arrange
+        Restaurant restaurant = new Restaurant(56, "El Rancho Mexican Grill", "234 Maple Road", "+23456678");
+        when(restaurantRepository.findById(56)).thenReturn(Optional.empty());
+        when(restaurantRepository.saveAndFlush(restaurant)).thenReturn(restaurant);
 
-    	// Set up the mock behavior for the repository
-    	List<Restaurant> restaurantList = new ArrayList<>();
-    	restaurantList.add(testRestaurant);
-    	when(restaurantRepository.findAll()).thenReturn(restaurantList);
+        // Act
+        int id = restaurantService.addRestaurants(restaurant);
 
-    	// Perform the test
-    	List<Restaurant> result = restaurantService.showRestaurants();
-
-    	// Assert the result
-    	assertEquals(restaurantList, result);
-
+        // Assert
+        assertEquals(56, id);
+        verify(restaurantRepository).findById(56);
+        verify(restaurantRepository).saveAndFlush(restaurant);
     }
 
     @Test
@@ -93,24 +89,24 @@ public class RestaurantServiceImplTest {
     }
     
     @Test
-	public void testUpdateRestaurants_Positive()  {
-	    // Given
-	    Restaurant existingRes = new Restaurant(53, "Bella Italia", "123 Main Street", "+91234567");
-	    Restaurant updatedRes = new Restaurant(53, "Tokyo Sushi Bar", "456 Elm Street", "+91234897");
-	    when(restaurantRepository.findById(53)).thenReturn(Optional.of(existingRes));
-	    when(restaurantRepository.save(existingRes)).thenReturn(existingRes);
- 
-	    // When
-	    restaurantService.updateRestaurant(updatedRes);
- 
-	    // Then
-	    verify(restaurantRepository).findById(53);
-	    verify(restaurantRepository).save(existingRes);
-	    assertEquals(updatedRes.getRestaurantName(), existingRes.getRestaurantName());
+    public void testUpdateRestaurants_Positive() {
+        // Given
+        Restaurant existingRes = new Restaurant(53, "Bella Italia", "123 Main Street", "+91234567");
+        Restaurant updatedRes = new Restaurant(53, "Tokyo Sushi Bar", "456 Elm Street", "+91234897");
+        when(restaurantRepository.findById(53)).thenReturn(Optional.of(existingRes));
+        when(restaurantRepository.save(existingRes)).thenReturn(existingRes); // Mocking save method
+
+        // When
+        restaurantService.updateRestaurant(updatedRes);
+
+        // Then
+        verify(restaurantRepository).findById(53);
+        verify(restaurantRepository).save(existingRes); // Verifying save method is called
+        assertEquals(updatedRes.getRestaurantName(), existingRes.getRestaurantName());
         assertEquals(updatedRes.getRestaurantAddress(), existingRes.getRestaurantAddress());
         assertEquals(updatedRes.getRestaurantPhone(), existingRes.getRestaurantPhone(), 0.001);
+    }
 
-	}
  
     
 	@Test
@@ -133,20 +129,20 @@ public class RestaurantServiceImplTest {
 	}
 	
 	@Test
-	public void testDeleteRestaurant_Positive()  {
+	public void testDeleteRestaurant_Positive() {
 	    // Given
-	    int ResId = 53;
+	    int resId = 53;
 	    Restaurant existingRes = new Restaurant(53, "Bella Italia", "123 Main Street", "+91234567");
-	    when(restaurantRepository.findById(ResId)).thenReturn(Optional.of(existingRes));
- 
+	    when(restaurantRepository.findById(resId)).thenReturn(Optional.of(existingRes));
+
 	    // When
-	    restaurantService.deleteRestaurantByID(ResId);
- 
+	    restaurantService.deleteRestaurantByID(resId);
+
 	    // Then
-	    verify(restaurantRepository).findById(ResId);
-	    verify(restaurantRepository).deleteById(ResId);
+	    verify(restaurantRepository).findById(resId);
+	    verify(restaurantRepository).deleteById(resId);
 	}
- 
+
 	@Test
 	public void testDeleteMenuItem_Negative() {
 	    // Given

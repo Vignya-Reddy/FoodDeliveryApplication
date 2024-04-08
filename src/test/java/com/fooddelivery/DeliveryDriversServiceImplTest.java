@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.fooddelivery.deliverydrivers.dao.DeliveryDriversRepository;
 import com.fooddelivery.deliverydrivers.service.DeliveryDriversServiceImpl;
+import com.fooddelivery.exception.DeliveryDriversNotFoundException;
 import com.fooddelivery.exception.DuplicateDeliveryDriversIDException;
 import com.fooddelivery.model.DeliveryDrivers;
 
@@ -66,7 +67,7 @@ public class DeliveryDriversServiceImplTest {
      }
      
      @Test
-     public void testFindById_ExistingDriver() {
+     public void testFindById_ExistingDriver() throws DeliveryDriversNotFoundException {
          DeliveryDrivers existingDriver = new DeliveryDrivers(10, "Emma Taylor", "+112233441010", "Bike");
          when(deliveryDriversRepository.findById(10)).thenReturn(Optional.of(existingDriver));
 
@@ -81,7 +82,7 @@ public class DeliveryDriversServiceImplTest {
      }
 
      @Test
-     public void testFindById_NonExistingDriver() {
+     public void testFindById_NonExistingDriver() throws DeliveryDriversNotFoundException {
          when(deliveryDriversRepository.findById(100)).thenReturn(Optional.empty());
 
          DeliveryDrivers result = deliveryDriversService.findById(100);

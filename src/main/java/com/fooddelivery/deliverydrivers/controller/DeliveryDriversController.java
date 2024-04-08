@@ -20,6 +20,7 @@ import com.fooddelivery.deliverydrivers.service.DeliveryDriversService;
 import com.fooddelivery.exception.DeliveryDriversNotFoundException;
 import com.fooddelivery.exception.DuplicateDeliveryDriversIDException;
 import com.fooddelivery.exception.InvalidDeliveryDriversIDException;
+import com.fooddelivery.exception.OrdersNotFoundException;
 import com.fooddelivery.exception.RestaurantNotFoundException;
 import com.fooddelivery.exception.SuccessResponse;
 import com.fooddelivery.model.DeliveryDrivers;
@@ -38,6 +39,11 @@ public class DeliveryDriversController {
 	@Autowired
     DeliveryDriversService deliveryDriversService;
 	
+	@Autowired
+    OrdersService ordersService;
+	
+	
+	
     @GetMapping(produces = "application/json")
     ResponseEntity<Map<String, Object>> showDeliveryDrivers() throws DeliveryDriversNotFoundException{
         System.out.println("Delivery Driver Controller");
@@ -47,7 +53,6 @@ public class DeliveryDriversController {
         
     }
     
-   
     @PostMapping(consumes = "application/json",produces = "application/json")
     ResponseEntity<String> addDeliveryDrivers(@Valid @RequestBody DeliveryDrivers deliveryDrivers) throws DuplicateDeliveryDriversIDException, InvalidDeliveryDriversIDException{
     	if(deliveryDrivers.getDeliveryDriversId()<= 0) {
@@ -86,16 +91,48 @@ public class DeliveryDriversController {
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("driver", driver, "message", successResponse.getMessage(), "code", successResponse.getCode()));
 	}
     
+//    @GetMapping("/{driverId}/orders")
+//	public ResponseEntity<Map<String, Object>> getOrdersByDriverId(@PathVariable int driverId) throws DeliveryDriversNotFoundException {
+//	    List<String> orders = deliveryDriversService.getOrdersByDriverId(driverId);
+//	    if (orders.isEmpty()) {
+//	        return ResponseEntity.noContent().build();
+//	    } else {
+//	        SuccessResponse successResponse = new SuccessResponse("orders retrieved successfully", "200");
+//	        return ResponseEntity.status(HttpStatus.OK).body(Map.of("orders", orders, "message", successResponse.getMessage(), "code", successResponse.getCode()));
+//	    }
+//	}
+    
+    @PutMapping("/api/orders/{orderId}/assignDriver/{driverId}")
+    public ResponseEntity<String> assignDriverToOrder(@PathVariable int orderId, @PathVariable int driverId) throws DeliveryDriversNotFoundException, OrdersNotFoundException {
+        Order order = ordersService.getOrderById(orderId);
+        if (order == null) {
+            throw new OrdersNotFoundException("Order not found");
+        }
+
+        DeliveryDrivers driver = deliveryDriversService.findById(driverId);
+        if (driver == null) {
+            throw new DeliveryDriversNotFoundException("Driver not found");
+        }
+
+        order.setDeliveryDrivers(driver);
+        ordersService.updateOrder(order);
+
+        SuccessResponse successResponse = new SuccessResponse("Driver assigned to the order successfully", "200");
+        return ResponseEntity.status(HttpStatus.OK).body("{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}");
+    }
+    
     @GetMapping("/{driverId}/orders")
-	public ResponseEntity<Map<String, Object>> getOrdersByDriverId(@PathVariable int driverId) throws DeliveryDriversNotFoundException {
-	    List<String> orders = deliveryDriversService.getOrdersByDriverId(driverId);
-	    if (orders.isEmpty()) {
-	        return ResponseEntity.noContent().build();
-	    } else {
-	        SuccessResponse successResponse = new SuccessResponse("orders retrieved successfully", "200");
-	        return ResponseEntity.status(HttpStatus.OK).body(Map.of("orders", orders, "message", successResponse.getMessage(), "code", successResponse.getCode()));
-	    }
-	}
- 
+    ResponseEntity<Map<String, Object>> getOrdersByDriverId(@PathVariable int driverId) throws DeliveryDriversNotFoundException, OrdersNotFoundException {
+        List<Order> orders = deliveryDriversService.getOrdersByDriverId(driverId);
+        
+        if (orders.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            SuccessResponse successResponse = new SuccessResponse("Orders retrieved successfully", "200");
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("orders", orders, "message", successResponse.getMessage(), "code", successResponse.getCode()));
+        }
+    }
+   
+
 
 }
