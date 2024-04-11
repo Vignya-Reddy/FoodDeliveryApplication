@@ -14,7 +14,9 @@ import com.fooddelivery.entity.Restaurant;
 
 @Repository
 public interface RestaurantRepository extends JpaRepository<Restaurant, Integer> {
-	
-	List<Restaurant> findByRestaurantId(int restaurantId);
+//	@Query("SELECT r FROM Ratings r WHERE r.restaurant.restaurantId = :restaurantId")
+//    List<Ratings> getRestaurantReviews(@Param("restaurantId") int restaurantId);
+	}
 
-}
+	
+

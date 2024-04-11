@@ -2,8 +2,7 @@ package com.fooddelivery.dto;
 
 import com.fooddelivery.entity.Restaurant;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+
 
 public class RestaurantDTO {
     private int restaurantId;

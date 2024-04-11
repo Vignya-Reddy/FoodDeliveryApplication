@@ -8,7 +8,7 @@ import com.fooddelivery.exception.CustomException;
 import com.fooddelivery.exception.DuplicateOrderIDException;
 import com.fooddelivery.exception.OrdersNotFoundException;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 
 public interface OrdersService {

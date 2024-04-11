@@ -1,5 +1,6 @@
 package com.fooddelivery.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ import com.fooddelivery.exception.RestaurantNotFoundException;
 import com.fooddelivery.service.MenuItemsService;
 import com.fooddelivery.util.SuccessResponse;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 @RestController
 @Validated
@@ -38,41 +39,50 @@ public class MenuItemsController {
     
     
     @GetMapping(produces = "application/json")
-    List<MenuItems> showMenuItems(){
-        System.out.println("MenuItems Controller");
-        List<MenuItems> menuList=menuService.showMenuItems();
-        return menuList;
+    List<MenuItemsDTO> showMenuItems() throws CustomException {
+        List<MenuItems> menuList = menuService.showMenuItems();
+        List<MenuItemsDTO> dtoList = new ArrayList<>();
+        for (MenuItems menuItem : menuList) {
+            dtoList.add(MenuItemsDTO.fromMenuItems(menuItem));
+        }
+        return dtoList;
     }
    
     
-    @PostMapping(consumes = "application/json",produces = "application/json")
-	ResponseEntity<Object> addMenuItems(@Valid  @RequestBody MenuItems items) throws CustomException{
-//	   if(items.getItemId()<=0) {
-//			throw new CustomException("Item ID is invalid");
-//		}
-		int menuId=menuService.addMenuItems(items);
-//		if(menuId==0) {
-//			throw new CustomException("Item with ID "+items.getItemId()+" already Exists");
-//		}
-		System.out.println("Item ID in controller is "+menuId);	
-		SuccessResponse successResponse = new SuccessResponse("Items are added successfully", "200");
+    @PostMapping(consumes = "application/json", produces = "application/json")
+    ResponseEntity<Object> addMenuItems(@Valid @RequestBody MenuItemsDTO menuItemDTO) throws CustomException {
+        MenuItems menuItem = new MenuItems();
+        menuItem.setItemId(menuItemDTO.getItemId());
+        menuItem.setItemName(menuItemDTO.getItemName());
+        menuItem.setItemDescription(menuItemDTO.getItemDescription());
+        menuItem.setItemPrice(menuItemDTO.getItemPrice());
+        
+        int menuItemId = menuService.addMenuItems(menuItem);
+        
+        SuccessResponse successResponse = new SuccessResponse("Menu item is added successfully", "200");
         String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
+        
         return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
-	}
+    }
     
     
     @PutMapping("/{itemId}")
-    ResponseEntity<Object> updateMenuItem(@Valid @RequestBody MenuItems items) throws CustomException{
-    	MenuItems menu = menuService.updateMenuItem(items);
-		if(items == null) {
-			throw new CustomException("MenuItem not present");
-		}
-		System.out.println("Item ID in controller");		
-		
-		SuccessResponse successResponse = new SuccessResponse("Items are updated successfully", "200");
+    ResponseEntity<Object> updateMenuItem(@Valid @RequestBody MenuItemsDTO menuItemDTO) throws CustomException {
+        MenuItems menuItem = new MenuItems();
+        menuItem.setItemId(menuItemDTO.getItemId());
+        menuItem.setItemName(menuItemDTO.getItemName());
+        menuItem.setItemDescription(menuItemDTO.getItemDescription());
+        menuItem.setItemPrice(menuItemDTO.getItemPrice());
+        
+        MenuItems updatedMenuItem = menuService.updateMenuItem(menuItem);
+        
+        MenuItemsDTO updatedMenuItemDTO = MenuItemsDTO.fromMenuItems(updatedMenuItem);
+        
+        SuccessResponse successResponse = new SuccessResponse("Menu item is updated successfully", "200");
         String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
-        return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
-	}
+        
+        return ResponseEntity.ok(updatedMenuItemDTO);
+    }
     
     
     
@@ -84,13 +94,24 @@ public class MenuItemsController {
         return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
 	}
 	
-	
-	
-	
-	
+	@GetMapping("/{restaurantId}/menu")
+	public ResponseEntity<Object> findMenuItemsByRestaurantId(@PathVariable int restaurantId) throws CustomException {
+	    List<MenuItems> menuItem = menuService.findMenuItemsByRestaurantId(restaurantId);
+	    
+//	    if (menuItem.isEmpty()) {
+//	       throw new CustomException("No items are found");
+//	    }
+	    
+	    List<MenuItemsDTO> menuItemsDTO = new ArrayList<>();
+	    for (MenuItems item : menuItem) {
+	        menuItemsDTO.add(MenuItemsDTO.fromMenuItems(item));
+	    }
+	    
+	    SuccessResponse successResponse = new SuccessResponse("Menu items retrieved successfully", "200");
+	    return ResponseEntity.ok().body(Map.of("menuItems", menuItemsDTO, "message", successResponse.getMessage(), "code", successResponse.getCode()));
+	}
 
-    
-   
+	
 
 }
  

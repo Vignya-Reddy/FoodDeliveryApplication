@@ -1,22 +1,13 @@
 package com.fooddelivery.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.fooddelivery.entity.Ratings;
 
 public class RatingsDTO {
     private int ratingId;
-
-    @NotNull(message = "Rating is required")
     private int rating;
-
     private String review;
-
-    private int restaurantId;
-
-    private int orderId;
-
-    // Getters and setters
-    // You may also add constructors and other methods as needed
+    private RestaurantDTO restaurant;
+    private OrdersDTO order;
 
     public int getRatingId() {
         return ratingId;
@@ -42,25 +33,31 @@ public class RatingsDTO {
         this.review = review;
     }
 
-    public int getRestaurantId() {
-        return restaurantId;
+    public RestaurantDTO getRestaurant() {
+        return restaurant;
     }
 
-    public void setRestaurantId(int restaurantId) {
-        this.restaurantId = restaurantId;
+    public void setRestaurant(RestaurantDTO restaurant) {
+        this.restaurant = restaurant;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public OrdersDTO getOrder() {
+        return order;
     }
 
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
+    public void setOrder(OrdersDTO order) {
+        this.order = order;
     }
 
-    @Override
-    public String toString() {
-        return "RatingsDTO [ratingId=" + ratingId + ", rating=" + rating + ", review=" + review + ", restaurantId="
-                + restaurantId + ", orderId=" + orderId + "]";
+    public static RatingsDTO fromRatings(Ratings rating) {
+        RatingsDTO dto = new RatingsDTO();
+        dto.setRatingId(rating.getRating_id());
+        dto.setRating(rating.getRating());
+        dto.setReview(rating.getReview());
+        dto.setRestaurant(RestaurantDTO.fromRestaurant(rating.getRestaurant()));
+        dto.setOrder(OrdersDTO.fromOrders(rating.getOrder()));
+        return dto;
     }
+
+	 
 }

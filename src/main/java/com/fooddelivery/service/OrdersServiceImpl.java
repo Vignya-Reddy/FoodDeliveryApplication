@@ -14,7 +14,7 @@ import com.fooddelivery.exception.CustomException;
 import com.fooddelivery.exception.DuplicateOrderIDException;
 import com.fooddelivery.exception.OrdersNotFoundException;
 
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 
 @Service
 public class OrdersServiceImpl implements OrdersService{
@@ -61,12 +61,19 @@ public class OrdersServiceImpl implements OrdersService{
 			
 		}
 		
+//		@Override
+//		@Transactional
+//		public Order getOrderById(int id) throws CustomException {
+//		    return orderDao.findById(id)
+//		            .orElseThrow(() -> new CustomException("Order with id " + id + " not found"));
+//		}
+		
 		@Override
 		@Transactional
-	    public Order  getOrderById(int id) throws CustomException {
-	        return orderDao.findById(id)
-	                .orElseThrow(() -> new CustomException("Order with id " + id + " not found"));
-	    }
-		
+		public Order getOrderById(int id) {
+		    return orderDao.findById(id).orElse(null);
+		}
+
+
 		
 }

@@ -62,7 +62,7 @@ public class DeliveryDriversServiceImplTest {
          
          DeliveryDrivers existingDriver = new DeliveryDrivers(10,"Emma Taylor", "+112233441010", "Bike");
          when(deliveryDriversRepository.findById(10)).thenReturn(Optional.of(existingDriver));
-         assertThrows(DuplicateDeliveryDriversIDException.class, () -> {
+         assertThrows(CustomException.class, () -> {
              deliveryDriversService.addDeliveryDrivers(existingDriver);
          });
          verify(deliveryDriversRepository, never()).saveAndFlush(existingDriver);
@@ -84,12 +84,17 @@ public class DeliveryDriversServiceImplTest {
      }
 
      @Test
-     public void testFindById_NonExistingDriver() throws CustomException {
+     public void testFindById_NonExistingDriver() {
+         // Mocking repository to return empty optional for driver ID 100
          when(deliveryDriversRepository.findById(100)).thenReturn(Optional.empty());
 
-         DeliveryDrivers result = deliveryDriversService.findById(100);
-
-         assertNull(result);
+         // Asserting that CustomException is thrown when findById is called with ID 100
+         assertThrows(CustomException.class, () -> {
+             deliveryDriversService.findById(100);
+         });
+         
+         // Verifying that the repository's findById method was called with ID 100
          verify(deliveryDriversRepository).findById(100);
      }
+
  }

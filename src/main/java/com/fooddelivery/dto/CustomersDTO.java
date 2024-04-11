@@ -8,8 +8,18 @@ public class CustomersDTO {
     private String customerEmail;
     private String customerPhone;
     
+	public CustomersDTO(int customerId, String customerName, String customerEmail, String customerPhone) {
+		super();
+		this.customerId = customerId;
+		this.customerName = customerName;
+		this.customerEmail = customerEmail;
+		this.customerPhone = customerPhone;
+	}
+	public CustomersDTO() {
+		
+	}
 
-    public int getCustomerId() {
+	public int getCustomerId() {
         return customerId;
     }
     

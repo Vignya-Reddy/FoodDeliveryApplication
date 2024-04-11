@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fooddelivery.dao.MenuItemsRepository;
+import com.fooddelivery.dao.RatingsRepository;
 import com.fooddelivery.dao.RestaurantRepository;
 import com.fooddelivery.dto.MenuItemsDTO;
 import com.fooddelivery.dto.RestaurantDTO;
@@ -20,10 +21,10 @@ import com.fooddelivery.exception.DuplicateItemIDException;
 import com.fooddelivery.exception.DuplicateRestaurantIDException;
 import com.fooddelivery.exception.RestaurantNotFoundException;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
@@ -34,7 +35,8 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Autowired
     MenuItemsRepository menuItemsDao;
     
-
+    @Autowired
+    RatingsRepository ratingsDao;
     
     @Override
     @Transactional
@@ -55,56 +57,71 @@ public class RestaurantServiceImpl implements RestaurantService {
 		return restaurant.getRestaurantId();
     }
     
+//    @Transactional
+//	@Override
+//	public Restaurant updateRestaurant(Restaurant restaurant) {
+//		
+//		Optional<Restaurant> previousRestaurant= restaurantDao.findById(restaurant.getRestaurantId());
+//		Restaurant resupdated=previousRestaurant.get();
+//		
+//		resupdated.setRestaurantName(restaurant.getRestaurantName()); 
+//	
+//		return resupdated;
+//	}
+    
+    @Override
     @Transactional
-	@Override
-	public Restaurant updateRestaurant(Restaurant restaurant) {
-		
-		Optional<Restaurant> previousRestaurant= restaurantDao.findById(restaurant.getRestaurantId());
-		Restaurant resupdated=previousRestaurant.get();
-		
-		resupdated.setRestaurantName(restaurant.getRestaurantName()); 
-	
-		return resupdated;
-	}
+    public Restaurant updateRestaurant(Restaurant restaurant) throws CustomException {
+        Optional<Restaurant> previousRestaurant = restaurantDao.findById(restaurant.getRestaurantId());
+        if (!previousRestaurant.isPresent()) {
+            throw new CustomException("Restaurant with ID " + restaurant.getRestaurantId() + " not found");
+        }
+        Restaurant resUpdated = previousRestaurant.get();
+        resUpdated.setRestaurantName(restaurant.getRestaurantName());
+        
+        // Save the updated restaurant entity
+        return restaurantDao.save(resUpdated);
+    }
+
+    
 
 
-	@Override
-	@Transactional
-	public void deleteRestaurantByID(int restaurantId) {
-		restaurantDao.deleteById(restaurantId);
-		
-	}
-	
-	@Override
-	@Transactional
-		public Restaurant findById(int restaurantId) throws CustomException {
-			Optional<Restaurant> res=restaurantDao.findById(restaurantId);
-			if(!(res.isPresent())) {
-				throw new CustomException("Not Found");
-			}
-			return res.get();
-}
-	@Override
-	@Transactional
-	public List<MenuItems> getMenuItemsByRestaurantId(int restaurantId) {
-		return menuItemsDao.findByRestaurantRestaurantId(restaurantId);
-	}
-	
-	
-	
+
+
+    @Override
+    @Transactional
+    public void deleteRestaurantByID(int restaurantId) throws CustomException {
+        Optional<Restaurant> restaurantOptional = restaurantDao.findById(restaurantId);
+        if (!restaurantOptional.isPresent()) {
+            throw new CustomException("Restaurant with ID " + restaurantId + " not found");
+        }
+        restaurantDao.deleteById(restaurantId);
+    }
+
 	
 //	@Override
-//    @Transactional
-//    public List<String> getAllReviewsForRestaurant(int restaurantId) throws CustomException {
-//        TypedQuery<String> query = entityManager.createQuery(
-//                "SELECT r.review FROM Ratings r WHERE r.restaurant.restaurantId = :restaurantId", String.class);
-//        query.setParameter("restaurantId", restaurantId);
-//        List<String> reviews = query.getResultList();
-//        if (reviews.isEmpty()) {
-//            throw new RestaurantNotFoundException("No reviews found for the restaurant ID: " + restaurantId);
-//        }
-//        return reviews;
-//    }
+//	@Transactional
+//		public Restaurant findById(int restaurantId) throws CustomException {
+//			Optional<Restaurant> res=restaurantDao.findById(restaurantId);
+//			if(!(res.isPresent())) {
+//				throw new CustomException("Not Found");
+//			}
+//			return res.get();
+//}
+    
+    @Override
+    @Transactional
+    public Restaurant findById(int restaurantId) throws CustomException {
+        Optional<Restaurant> res = restaurantDao.findById(restaurantId);
+        if (!res.isPresent()) {
+            throw new CustomException("Restaurant with ID " + restaurantId + " not found");
+        }
+        return res.get();
+    }
+    
+    
+    
+    
 }
 	
 	

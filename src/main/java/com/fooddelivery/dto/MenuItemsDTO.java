@@ -2,8 +2,6 @@ package com.fooddelivery.dto;
 
 import com.fooddelivery.entity.MenuItems;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public class MenuItemsDTO {
     private int itemId;

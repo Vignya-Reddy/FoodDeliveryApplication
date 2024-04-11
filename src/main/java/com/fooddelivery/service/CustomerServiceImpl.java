@@ -7,21 +7,23 @@ import org.springframework.stereotype.Service;
 
 import com.fooddelivery.dao.CustomerRepository;
 import com.fooddelivery.dao.OrdersRepository;
+import com.fooddelivery.dao.UserRepository;
 import com.fooddelivery.dto.CustomersDTO;
 import com.fooddelivery.entity.Customer;
 import com.fooddelivery.entity.Order;
 import com.fooddelivery.entity.Ratings;
+import com.fooddelivery.entity.UserInfo;
 import com.fooddelivery.exception.CustomException;
 import com.fooddelivery.exception.CustomerNotFoundException;
 import com.fooddelivery.exception.DuplicateCustomerIDException;
 import com.fooddelivery.exception.OrdersNotFoundException;
 import com.fooddelivery.exception.ReviewsNotFoundException;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
  
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -31,6 +33,10 @@ public class CustomerServiceImpl implements CustomerService {
   
 	   @Autowired
 	   OrdersRepository orderDao;
+	   
+	   @Autowired
+	   UserRepository userDao;
+	   
 	   
 	   @Override
 	   @Transactional
@@ -105,6 +111,8 @@ public class CustomerServiceImpl implements CustomerService {
 //
 //             return orders;
 //         }
+     	
+     	
      	
      	
 

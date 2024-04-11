@@ -3,49 +3,49 @@ package com.fooddelivery.dto;
 import com.fooddelivery.entity.DeliveryDrivers;
 
 public class DeliveryDriversDTO {
-    private int driverId;
-    private String driverName;
-    private String driverPhone;
-    private String driverVehicle;
+    private int deliveryDriversId;
+    private String deliveryDriversName;
+    private String deliveryDriversPhone;
+    private String deliveryDriversVehicle;
 
-    public int getDriverId() {
-        return driverId;
+    public int getDeliveryDriversId() {
+        return deliveryDriversId;
     }
 
-    public void setDriverId(int driverId) {
-        this.driverId = driverId;
+    public void setDeliveryDriversId(int deliveryDriversId) {
+        this.deliveryDriversId = deliveryDriversId;
     }
 
-    public String getDriverName() {
-        return driverName;
+    public String getDeliveryDriversName() {
+        return deliveryDriversName;
     }
 
-    public void setDriverName(String driverName) {
-        this.driverName = driverName;
+    public void setDeliveryDriversName(String deliveryDriversName) {
+        this.deliveryDriversName = deliveryDriversName;
     }
 
-    public String getDriverPhone() {
-        return driverPhone;
+    public String getDeliveryDriversPhone() {
+        return deliveryDriversPhone;
     }
 
-    public void setDriverPhone(String driverPhone) {
-        this.driverPhone = driverPhone;
+    public void setDeliveryDriversPhone(String deliveryDriversPhone) {
+        this.deliveryDriversPhone = deliveryDriversPhone;
     }
 
-    public String getDriverVehicle() {
-        return driverVehicle;
+    public String getDeliveryDriversVehicle() {
+        return deliveryDriversVehicle;
     }
 
-    public void setDriverVehicle(String driverVehicle) {
-        this.driverVehicle = driverVehicle;
+    public void setDeliveryDriversVehicle(String deliveryDriversVehicle) {
+        this.deliveryDriversVehicle = deliveryDriversVehicle;
     }
 
     public static DeliveryDriversDTO fromDeliveryDrivers(DeliveryDrivers deliveryDriver) {
         DeliveryDriversDTO dto = new DeliveryDriversDTO();
-        dto.setDriverId(deliveryDriver.getDeliveryDriversId());
-        dto.setDriverName(deliveryDriver.getDeliveryDriversName());
-        dto.setDriverPhone(deliveryDriver.getDeliveryDriversPhone());
-        dto.setDriverVehicle(deliveryDriver.getDeliveryDriversVehicle());
+        dto.setDeliveryDriversId(deliveryDriver.getDeliveryDriversId());
+        dto.setDeliveryDriversName(deliveryDriver.getDeliveryDriversName());
+        dto.setDeliveryDriversPhone(deliveryDriver.getDeliveryDriversPhone());
+        dto.setDeliveryDriversVehicle(deliveryDriver.getDeliveryDriversVehicle());
         return dto;
     }
 }

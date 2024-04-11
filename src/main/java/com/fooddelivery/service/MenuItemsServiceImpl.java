@@ -15,7 +15,7 @@ import com.fooddelivery.exception.DuplicateItemIDException;
 import com.fooddelivery.exception.ItemNotFoundException;
 import com.fooddelivery.exception.RestaurantNotFoundException;
 
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 
 @Service
 public class MenuItemsServiceImpl implements MenuItemsService {
@@ -70,16 +70,18 @@ public class MenuItemsServiceImpl implements MenuItemsService {
         }
     }
     
-
     @Override
-    @Transactional
-    public List<MenuItems> getMenuItemsByRestaurantId(int restaurantId) throws CustomException {
-        List<MenuItems> menuItems = menuItemsDao.findByRestaurantRestaurantId(restaurantId);
+    public List<MenuItems> findMenuItemsByRestaurantId(int restaurantId) throws CustomException {
+        List<MenuItems> menuItems = menuItemsDao.findByRestaurantId(restaurantId);
         if (menuItems.isEmpty()) {
-            throw new CustomException("No menu items found for restaurant with ID " + restaurantId);
+            throw new CustomException("No menu items found for restaurant with ID: " + restaurantId);
         }
         return menuItems;
     }
+
+    
+
+   
     
     
 

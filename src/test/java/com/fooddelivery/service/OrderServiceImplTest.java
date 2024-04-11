@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -76,7 +78,7 @@ public class OrderServiceImplTest {
         when(orderRepository.findById(55)).thenReturn(Optional.of(existingOrder));
 
         // Then
-        assertThrows(DuplicateOrderIDException.class, () -> {
+        assertThrows(CustomException.class, () -> {
             // When
             orderService.addOrders(existingOrder);
         });
@@ -111,7 +113,7 @@ public class OrderServiceImplTest {
         when(orderRepository.findById(nonExistentOrderId)).thenReturn(Optional.empty());
 
         // Then
-        assertThrows(OrdersNotFoundException.class, () -> {
+        assertThrows(CustomException.class, () -> {
             // When
             orderService.updateOrder(updatedOrder);
         });
@@ -147,7 +149,32 @@ public class OrderServiceImplTest {
             orderService.deleteOrderByID(nonExistingOrderId);
         });
     }
+    
+    @Test
+    public void testFindById_ExistingOrder() throws CustomException {
+        Order existingOrder = new Order(1, "2024-01-01 12:00:00", "Pending");
+        when(orderRepository.findById(1)).thenReturn(Optional.of(existingOrder));
+ 
+        Order result = orderService.getOrderById(1);
+ 
+        assertNotNull(result);
+        assertEquals(1, result.getOrderId());
+        assertEquals("2024-01-01 12:00:00", result.getOrderDate());
+        assertEquals( "Pending", result.getOrderStatus());
+        verify(orderRepository).findById(1);
+    }
+ 
+    @Test
+    public void testFindById_NonExistingOrder() throws  CustomException {
+        when(orderRepository.findById(100)).thenReturn(Optional.empty());
+ 
+        Order result = orderService.getOrderById(100);
+ 
+        assertNull(result);
+        verify(orderRepository).findById(100);
+   
 
 }
+}
     
-
+ 

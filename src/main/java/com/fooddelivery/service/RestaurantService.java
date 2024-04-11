@@ -17,15 +17,20 @@ public interface RestaurantService {
     
     List<Restaurant> showRestaurants();
     
-    Restaurant updateRestaurant(Restaurant restaurant);
+    Restaurant updateRestaurant(Restaurant restaurant) throws CustomException;
 	
-	void deleteRestaurantByID(int restaurantId);
+	void deleteRestaurantByID(int restaurantId) throws CustomException;
 
 	Restaurant findById(int restaurantId) throws CustomException;
-	
-    List<MenuItems> getMenuItemsByRestaurantId(int restaurantId);
 
-    //List<String> getAllReviewsForRestaurant(int restaurantId) throws CustomException;
+	
+	
+	
+	
+	
+	
+	
+	
 
 	
 	

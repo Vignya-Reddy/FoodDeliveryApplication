@@ -1,7 +1,10 @@
 package com.fooddelivery.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,7 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import com.fooddelivery.dto.DeliveryDriversDTO;
+import com.fooddelivery.dto.OrdersDTO;
 import com.fooddelivery.entity.DeliveryDrivers;
 import com.fooddelivery.entity.Order;
 
@@ -25,7 +29,7 @@ import com.fooddelivery.service.DeliveryDriversService;
 import com.fooddelivery.service.OrdersService;
 import com.fooddelivery.util.SuccessResponse;
 
-import jakarta.validation.Valid;
+
 
 
 @RestController
@@ -40,72 +44,78 @@ public class DeliveryDriversController {
 	
 	
 	
-    @GetMapping(produces = "application/json")
-    ResponseEntity<Map<String, Object>> showDeliveryDrivers() throws CustomException{
-        System.out.println("Delivery Driver Controller");
-        List<DeliveryDrivers> driList= deliveryDriversService.showDeliveryDrivers();
-        SuccessResponse successResponse = new SuccessResponse("Drivers list retrieved successfully", "200");
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("restaurants", driList, "message", successResponse.getMessage(), "code", successResponse.getCode()));
-        
+	@GetMapping(produces = "application/json")
+    List<DeliveryDriversDTO> showDeliveryDrivers() throws CustomException {
+        List<DeliveryDrivers> driList = deliveryDriversService.showDeliveryDrivers();
+        List<DeliveryDriversDTO> dtoList = new ArrayList<>();
+        for (DeliveryDrivers driver : driList) {
+            dtoList.add(DeliveryDriversDTO.fromDeliveryDrivers(driver));
+        }
+        return dtoList;
     }
     
-    @PostMapping(consumes = "application/json",produces = "application/json")
-    ResponseEntity<String> addDeliveryDrivers(@Valid @RequestBody DeliveryDrivers deliveryDrivers) throws CustomException{
-//    	if(deliveryDrivers.getDeliveryDriversId()<= 0) {
-//			throw new InvalidDeliveryDriversIDException("DeliveryDrivers ID is invalid");
-//		}
-    	
-    	int delId = deliveryDriversService.addDeliveryDrivers(deliveryDrivers);
-//        if(delId == 0) {
-//            throw new DuplicateDeliveryDriversIDException("DeliveryDrivers is duplicate");
-//        }
-        System.out.println("DeliveryDrivers Id in controller is "+delId);
-        SuccessResponse successResponse = new SuccessResponse("Restaurants are fetched successfully", "200");
-        String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
-        return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
-    }
-     
-    @GetMapping("/{driverId}")
-	ResponseEntity<Map<String, Object>> findByDriverId(@PathVariable("driverId") Integer driverId) throws CustomException{
-    	DeliveryDrivers driver = deliveryDriversService.findById(driverId);
-		if(driver == null) {
-			throw new CustomException("Customer not present");
-		}
-		SuccessResponse successResponse = new SuccessResponse("Driver is fetched successfully", "200");
-        String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("driver", driver, "message", successResponse.getMessage(), "code", successResponse.getCode()));
+	@PostMapping(consumes = "application/json", produces = "application/json")
+	ResponseEntity<Object> addDeliveryDrivers(@Valid @RequestBody DeliveryDriversDTO driverDTO) throws CustomException {
+	    DeliveryDrivers driver = new DeliveryDrivers();
+	    driver.setDeliveryDriversId(driverDTO.getDeliveryDriversId());
+	    driver.setDeliveryDriversName(driverDTO.getDeliveryDriversName());
+	    driver.setDeliveryDriversPhone(driverDTO.getDeliveryDriversPhone());
+	    driver.setDeliveryDriversVehicle(driverDTO.getDeliveryDriversVehicle());
+	    
+	    int delId = deliveryDriversService.addDeliveryDrivers(driver);
+	    SuccessResponse successResponse = new SuccessResponse("Driver added successfully", "200");
+	    return ResponseEntity.status(HttpStatus.OK).body(Map.of("driverId", delId, "message", successResponse.getMessage(), "code", successResponse.getCode()));
 	}
+
+     
+	 @GetMapping("/{driverId}")
+	    ResponseEntity<Map<String, Object>> findByDriverId(@PathVariable("driverId") Integer driverId) throws CustomException {
+	        DeliveryDrivers driver = deliveryDriversService.findById(driverId);
+//	        if (driver == null) {
+//	            throw new CustomException("Driver not present");
+//	        }
+	        DeliveryDriversDTO driverDTO = DeliveryDriversDTO.fromDeliveryDrivers(driver);
+	        SuccessResponse successResponse = new SuccessResponse("Driver is fetched successfully", "200");
+	        return ResponseEntity.status(HttpStatus.OK).body(Map.of("driver", driverDTO, "message", successResponse.getMessage(), "code", successResponse.getCode()));
+	    }
     
     
-    @PutMapping("/api/orders/{orderId}/assignDriver/{driverId}")
-    public ResponseEntity<String> assignDriverToOrder(@PathVariable int orderId, @PathVariable int driverId) throws CustomException {
-        Order order = ordersService.getOrderById(orderId);
-        if (order == null) {
-            throw new CustomException("Order not found");
-        }
+	 @PutMapping("/api/orders/{orderId}/assignDriver/{driverId}")
+	 public ResponseEntity<String> assignDriverToOrder(@PathVariable int orderId, @PathVariable int driverId) throws CustomException {
+	     Order order = ordersService.getOrderById(orderId);
+//	     if (order == null) {
+//	         throw new CustomException("Order not found");
+//	     }
 
-        DeliveryDrivers driver = deliveryDriversService.findById(driverId);
-        if (driver == null) {
-            throw new CustomException("Driver not found");
-        }
+	     DeliveryDrivers driver = deliveryDriversService.findById(driverId);
+//	     if (driver == null) {
+//	         throw new CustomException("Driver not found");
+//	     }
 
-        order.setDeliveryDrivers(driver);
-        ordersService.updateOrder(order);
+	     order.setDeliveryDrivers(driver);
+	     ordersService.updateOrder(order);
 
-        SuccessResponse successResponse = new SuccessResponse("Driver assigned to the order successfully", "200");
-        return ResponseEntity.status(HttpStatus.OK).body("{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}");
-    }
+	     // Convert the updated order to DTO
+	     OrdersDTO orderDTO = OrdersDTO.fromOrders(order);
+
+	     SuccessResponse successResponse = new SuccessResponse("Driver assigned to the order successfully", "200");
+	     return ResponseEntity.status(HttpStatus.OK).body("{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\", \"order\": " + orderDTO + "}");
+	 }
+
     
-    @GetMapping("/{driverId}/orders")
-    ResponseEntity<Map<String, Object>> getOrdersByDriverId(@PathVariable int driverId) throws  CustomException {
-        List<Order> orders = deliveryDriversService.getOrdersByDriverId(driverId);
-        
-        if (orders.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            SuccessResponse successResponse = new SuccessResponse("Orders retrieved successfully", "200");
-            return ResponseEntity.status(HttpStatus.OK).body(Map.of("orders", orders, "message", successResponse.getMessage(), "code", successResponse.getCode()));
-        }
-    }
- 
+	 @GetMapping("/{driverId}/orders")
+	 ResponseEntity<Map<String, Object>> getOrdersByDriverId(@PathVariable int driverId) throws  CustomException {
+	     List<Order> orders = deliveryDriversService.getOrdersByDriverId(driverId);
+	     List<OrdersDTO> orderDTOList = new ArrayList<>();
+	     for (Order order : orders) {
+	         orderDTOList.add(OrdersDTO.fromOrders(order));
+	     }
+	     
+	     if (orderDTOList.isEmpty()) {
+	         return ResponseEntity.noContent().build();
+	     } else {
+	         SuccessResponse successResponse = new SuccessResponse("Orders retrieved successfully", "200");
+	         return ResponseEntity.status(HttpStatus.OK).body(Map.of("orders", orderDTOList, "message", successResponse.getMessage(), "code", successResponse.getCode()));
+	     }
+}
 }

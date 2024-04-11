@@ -9,7 +9,7 @@ import com.fooddelivery.exception.DuplicateItemIDException;
 import com.fooddelivery.exception.ItemNotFoundException;
 import com.fooddelivery.exception.RestaurantNotFoundException;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 public interface MenuItemsService {
     int addMenuItems(MenuItems items) throws CustomException;
@@ -19,8 +19,10 @@ public interface MenuItemsService {
 	void deleteMenuItemByID(int itemId) throws CustomException;
 
 	MenuItems updateMenuItem(MenuItems items) throws CustomException;
+	
+	List<MenuItems> findMenuItemsByRestaurantId(int restaurantId) throws CustomException ;
 
-	List<MenuItems> getMenuItemsByRestaurantId(int restaurantId) throws CustomException;
+
 
 	
 

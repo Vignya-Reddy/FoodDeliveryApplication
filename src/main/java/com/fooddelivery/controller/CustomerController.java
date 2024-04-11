@@ -3,10 +3,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +27,7 @@ import com.fooddelivery.dto.CustomersDTO;
 import com.fooddelivery.entity.Customer;
 import com.fooddelivery.entity.Order;
 import com.fooddelivery.entity.Ratings;
+import com.fooddelivery.entity.UserInfo;
 import com.fooddelivery.exception.CustomException;
 import com.fooddelivery.exception.CustomerNotFoundException;
 import com.fooddelivery.exception.DuplicateCustomerIDException;
@@ -28,19 +35,24 @@ import com.fooddelivery.exception.DuplicateCustomerIDException;
 import com.fooddelivery.exception.InvalidCustomerIDException;
 import com.fooddelivery.exception.OrdersNotFoundException;
 import com.fooddelivery.exception.ReviewsNotFoundException;
+import com.fooddelivery.jwt.AuthenticationRequest;
+import com.fooddelivery.jwt.AuthenticationResponse;
+import com.fooddelivery.jwt.JwtUtil;
+import com.fooddelivery.jwt.MyUserDetailsService;
 import com.fooddelivery.service.CustomerService;
+import com.fooddelivery.service.UserInfoService;
 import com.fooddelivery.util.SuccessResponse;
 
-import jakarta.validation.Valid;
 
 
 @RestController
 @Validated
-@RequestMapping(value="/api/customers")
+@RequestMapping(value="/users")
 public class CustomerController {
     @Autowired
     CustomerService customerService;
     
+  
     @GetMapping(produces = "application/json")
     List<CustomersDTO> showCustomers() throws CustomException{
         List<Customer> custList = customerService.showCustomers();
@@ -61,7 +73,6 @@ public class CustomerController {
         
         SuccessResponse successResponse = new SuccessResponse("Customer is fetched successfully", "200");
         String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
-        
         return ResponseEntity.status(HttpStatus.OK).body(Map.of("Customer", customerDTO, "message", successResponse.getMessage(), "code", successResponse.getCode()));
     }
        
@@ -108,4 +119,10 @@ public class CustomerController {
         
         return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
     }
+    
+	
 }
+
+    
+   
+

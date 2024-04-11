@@ -1,5 +1,6 @@
 package com.fooddelivery.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,15 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fooddelivery.service.MenuItemsService;
 import com.fooddelivery.service.RestaurantService;
 import com.fooddelivery.util.SuccessResponse;
-import com.fooddelivery.dto.MenuItemsDTO;
 import com.fooddelivery.dto.RestaurantDTO;
-import com.fooddelivery.entity.DeliveryAddress;
 import com.fooddelivery.entity.MenuItems;
 import com.fooddelivery.entity.Ratings;
 import com.fooddelivery.entity.Restaurant;
 import com.fooddelivery.exception.*;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 @RestController
 @Validated
@@ -41,43 +40,55 @@ public class RestaurantController {
     private MenuItemsService menuItemsService;
     
     @GetMapping(produces = "application/json")
-    ResponseEntity<Map<String, Object>> showRestaurants() throws CustomException{
-        System.out.println("Restaurant Controller");
-        List<Restaurant> resList= restaurantService.showRestaurants();
-        SuccessResponse successResponse = new SuccessResponse("Restaurant list retrieved successfully", "200");
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("restaurants", resList, "message", successResponse.getMessage(), "code", successResponse.getCode()));
-        
+    List<RestaurantDTO> showRestaurants() throws CustomException {
+        List<Restaurant> restaurantList = restaurantService.showRestaurants();
+        List<RestaurantDTO> dtoList = new ArrayList<>();
+        for (Restaurant restaurant : restaurantList) {
+            dtoList.add(RestaurantDTO.fromRestaurant(restaurant));
+        }
+        return dtoList;
     }
     
-    @PostMapping(consumes = "application/json",produces = "application/json")
-    ResponseEntity<String> addRestaurants(@Valid @RequestBody Restaurant restaurant) throws CustomException{
-//    	if(restaurant.getRestaurantId()<= 0) {
-//			throw new InvalidRestaurantIDException("Restaurant ID is invalid");
-//		}
-    	
-    	int resId = restaurantService.addRestaurants(restaurant);
-//        if(resId == 0) {
-//            throw new DuplicateRestaurantIDException("Restaurant is duplicate");
-//        }
-        System.out.println("Restaurant Id in controller is "+resId);
-        SuccessResponse successResponse = new SuccessResponse("Restaurants are added successfully", "200");
-        String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
-        return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
+    @PostMapping(consumes = "application/json", produces = "application/json")
+    ResponseEntity<Object> addRestaurants(@Valid @RequestBody RestaurantDTO restaurantDTO) throws CustomException {
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantId(restaurantDTO.getRestaurantId());
+        restaurant.setRestaurantName(restaurantDTO.getRestaurantName());
+        restaurant.setRestaurantAddress(restaurantDTO.getRestaurantAddress());
+        restaurant.setRestaurantPhone(restaurantDTO.getRestaurantPhone());
+        
+        int resId = restaurantService.addRestaurants(restaurant);
+        
+        SuccessResponse successResponse = new SuccessResponse("Restaurant added successfully", "200");
+        
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Map.of("message", successResponse.getMessage(), "code", successResponse.getCode())
+        );
     }
+
     
     
     @PutMapping("/{restaurantId}")
-	ResponseEntity<String> updateRestaurant(@Valid @RequestBody Restaurant restaurant){
-    	Restaurant res = restaurantService.updateRestaurant(restaurant);
-		System.out.println("Restaurant ID in controller");		
-		SuccessResponse successResponse = new SuccessResponse("Restaurants are updated successfully", "200");
-        String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
-        return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
-	}
-    
+    ResponseEntity<Object> updateRestaurant(@Valid @RequestBody RestaurantDTO restaurantDTO) throws CustomException {
+        Restaurant restaurant = new Restaurant();
+        restaurant.setRestaurantId(restaurantDTO.getRestaurantId());
+        restaurant.setRestaurantName(restaurantDTO.getRestaurantName());
+        restaurant.setRestaurantAddress(restaurantDTO.getRestaurantAddress());
+        restaurant.setRestaurantPhone(restaurantDTO.getRestaurantPhone());
+        
+        Restaurant updatedRestaurant = restaurantService.updateRestaurant(restaurant);
+        RestaurantDTO updatedRestaurantDTO = RestaurantDTO.fromRestaurant(updatedRestaurant);
+        
+        SuccessResponse successResponse = new SuccessResponse("Restaurant updated successfully", "200");
+        
+        return ResponseEntity.status(HttpStatus.OK).body(
+                Map.of("restaurant", updatedRestaurantDTO, "message", successResponse.getMessage(), "code", successResponse.getCode())
+        );
+    }
+
     
 	@DeleteMapping("/{restaurantId}")
-	ResponseEntity<String> deleteCustomer(@PathVariable("restaurantId") Integer restaurantId ) {
+	ResponseEntity<String> deleteCustomer(@PathVariable("restaurantId") Integer restaurantId ) throws CustomException {
 		restaurantService.deleteRestaurantByID(restaurantId);
 		SuccessResponse successResponse = new SuccessResponse("Restaurants are deleted successfully", "200");
         String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
@@ -87,36 +98,20 @@ public class RestaurantController {
 	
 	@GetMapping(path="/{restaurantId}", produces = "application/json")
 	ResponseEntity<Map<String, Object>> findByRestaurantId(@PathVariable("restaurantId") Integer restaurantId) throws CustomException{
-		Restaurant res = restaurantService.findById(restaurantId);
-		if(res == null) {
-			throw new CustomException("Customer not present");
-		}
+		Restaurant restaurant = restaurantService.findById(restaurantId);
+        RestaurantDTO restaurantDTO = RestaurantDTO.fromRestaurant(restaurant);
 		SuccessResponse successResponse = new SuccessResponse("Restaurant is fetched successfully", "200");
         String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("restaurant", res, "message", successResponse.getMessage(), "code", successResponse.getCode()));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("restaurant", restaurant, "message", successResponse.getMessage(), "code", successResponse.getCode()));
 	}
 	
-	@GetMapping("/{restaurantId}/menu")
-	ResponseEntity<Map<String, Object>> getMenuItemsByRestaurantId(@PathVariable int restaurantId) throws CustomException {
-	    List<MenuItems> menuItems = menuItemsService.getMenuItemsByRestaurantId(restaurantId);
-//	    if (menuItems.isEmpty()) {
-//	        throw new RestaurantNotFoundException("No menu items found for the restaurant ID: " + restaurantId);
-//	    }
-	    SuccessResponse successResponse = new SuccessResponse("Restaurant is fetched successfully", "200");
-        String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}";
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("restaurant", menuItems, "message", successResponse.getMessage(), "code", successResponse.getCode()));
-
-}
 	
-//	@GetMapping("/{restaurantId}/reviews")
-//	public ResponseEntity<Map<String, Object>> getAllReviewsForRestaurant(@PathVariable int restaurantId) throws CustomException {
-//	    List<String> reviews = restaurantService.getAllReviewsForRestaurant(restaurantId);
-//	    if (reviews.isEmpty()) {
-//	        return ResponseEntity.noContent().build();
-//	    } else {
-//	        SuccessResponse successResponse = new SuccessResponse("Reviews retrieved successfully", "200");
-//	        return ResponseEntity.status(HttpStatus.OK).body(Map.of("reviews", reviews, "message", successResponse.getMessage(), "code", successResponse.getCode()));
-//	    }
-//	}
-
 }
+
+
+	
+	
+
+
+	
+

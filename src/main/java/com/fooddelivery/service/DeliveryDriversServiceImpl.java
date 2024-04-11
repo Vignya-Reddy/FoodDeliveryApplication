@@ -19,10 +19,10 @@ import com.fooddelivery.exception.DuplicateDeliveryDriversIDException;
 import com.fooddelivery.exception.OrdersNotFoundException;
 import com.fooddelivery.exception.RestaurantNotFoundException;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 @Service
 public class DeliveryDriversServiceImpl implements DeliveryDriversService {

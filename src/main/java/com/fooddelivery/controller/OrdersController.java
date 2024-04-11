@@ -2,6 +2,7 @@ package com.fooddelivery.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import com.fooddelivery.exception.CustomException;
 import com.fooddelivery.service.OrdersService;
 import com.fooddelivery.util.SuccessResponse;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 
 @RestController
 @Validated
@@ -75,4 +76,17 @@ public class OrdersController {
 
         return ResponseEntity.status(HttpStatus.OK).body(jsonResponse);
     }
+    
+    @GetMapping("/{orderId}") 	
+    ResponseEntity<Map<String, Object>> getOrderById(@PathVariable("orderId") Integer orderId) throws CustomException{ 
+        Order order = orderService.getOrderById(orderId); 			
+//        if(order == null) { 	
+//            throw new CustomException("Order not present"); 	
+//        } 			
+        OrdersDTO orderDTO = OrdersDTO.fromOrders(order);
+        SuccessResponse successResponse = new SuccessResponse("Order is fetched successfully", "200"); 
+        String jsonResponse = "{\"message\": \"" + successResponse.getMessage() + "\", \"code\": \"" + successResponse.getCode() + "\"}"; 	 
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("order", orderDTO, "message", successResponse.getMessage(), "code", successResponse.getCode())); 
+    }
+
 }

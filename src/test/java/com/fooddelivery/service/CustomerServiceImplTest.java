@@ -60,7 +60,7 @@ public class CustomerServiceImplTest {
     public void testAddCustomerWithDuplicateItemID_Negative() {
     	Customer existingItem = new Customer(54, "Mark Antony", "markantony@example.com", "+112238885577");
         when(customerRepository.findById(54)).thenReturn(Optional.of(existingItem));
-        assertThrows(DuplicateCustomerIDException.class, () -> {
+        assertThrows( CustomException.class, () -> {
             customerService.addCustomers(existingItem);
         });
         verify(customerRepository, never()).saveAndFlush(existingItem);
@@ -84,7 +84,7 @@ public class CustomerServiceImplTest {
 	    int nonExistentCustomerId = 99;
 	    Customer updatedCustomer = new Customer(99, "Paul", "paul@example.com", "+9988776654");
 		when(customerRepository.findById(nonExistentCustomerId)).thenReturn(Optional.empty());
-	    assertThrows(CustomerNotFoundException.class, () -> {
+	    assertThrows(CustomException.class, () -> {
 	    customerService.updateCustomer(updatedCustomer);
 	    });
 	    verify(customerRepository).findById(nonExistentCustomerId);
@@ -105,7 +105,7 @@ public class CustomerServiceImplTest {
 	public void testDeleteCustomer_Negative() {
 	    int nonExistentCustomerId = 99;
 	    when(customerRepository.findById(nonExistentCustomerId)).thenReturn(Optional.empty());
-	    assertThrows(CustomerNotFoundException.class, () -> {
+	    assertThrows(CustomException.class, () -> {
         customerService.deleteCustomerByID(nonExistentCustomerId);
         });
 	    verify(customerRepository).findById(nonExistentCustomerId);
@@ -130,7 +130,7 @@ public class CustomerServiceImplTest {
 	    customerService.findByCustomerId(nonExistingCustomerId);
 	    fail("Expected CustomerNotFoundException");
 	    } catch (Exception e) { 
-	    assertTrue(e instanceof CustomerNotFoundException);
+	    assertTrue(e instanceof CustomException);
 	  } 
 	}  
 }

@@ -1,14 +1,14 @@
 package com.fooddelivery.entity;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name="userinfo1")
-public class UserDetails {
+public class UserInfo {
 	@Id
 	@Column(name="userid")
 	private int userId;
@@ -24,7 +24,7 @@ public class UserDetails {
 	private String role;
 
 
-	public UserDetails(int userId, String userName, String password, String role) {
+	public UserInfo(int userId, String userName, String password, String role) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
@@ -33,7 +33,7 @@ public class UserDetails {
 	}
 
 
-	public UserDetails()  {
+	public UserInfo()  {
 		
 	}
 
